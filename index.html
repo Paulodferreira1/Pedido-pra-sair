@@ -31,6 +31,8 @@
     .invite h2 { margin:0 0 12px; font-size:34px; line-height:1.1; }
     .invite p { color:#765b65; font-size:17px; line-height:1.55; }
     .date { display:inline-block; margin:6px 0; padding:10px 15px; border-radius:14px; background:#ffebe8; color:#98495e; font-weight:800; }
+    .music-toggle { margin:6px 0 12px; color:#98495e; background:#ffebe8; }
+    .music-toggle:hover { background:#ffe0e1; transform:translateY(-2px); }
     .close { margin-top:9px; color:white; background:var(--pink); }
     @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; } }
   </style>
@@ -54,6 +56,7 @@
       <p>Nosso encontro vai ser:</p>
       <div class="date">Sábado, 10/10, às 20h</div>
       <p>Sua única preocupação é escolher a roupa que vai vestir. ✨</p>
+      <button class="music-toggle" id="music-toggle" type="button">Tocar música 🎵</button>
       <button class="close" id="close" type="button">Mal posso esperar! 💕</button>
     </section>
   </div>
@@ -64,6 +67,10 @@
     const modal = document.querySelector('#modal');
     const yesButton = document.querySelector('#yes');
     const closeButton = document.querySelector('#close');
+    const musicToggle = document.querySelector('#music-toggle');
+    const backgroundMusic = new Audio('musica-de-fundo.mp3');
+    backgroundMusic.loop = true;
+    backgroundMusic.volume = 0.4;
     let moves = 0;
 
     function moveNo() {
@@ -107,7 +114,13 @@
       }
     }
 
+    function startBackgroundMusic() {
+      musicToggle.textContent = 'Pausar música 🔊';
+      backgroundMusic.play().catch(() => { musicToggle.textContent = 'Tocar música 🎵'; });
+    }
+
     function openModal() {
+      startBackgroundMusic();
       launchHearts();
       modal.classList.add('show');
       modal.setAttribute('aria-hidden', 'false');
@@ -118,6 +131,14 @@
       modal.setAttribute('aria-hidden', 'true');
       yesButton.focus();
     }
+    musicToggle.addEventListener('click', () => {
+      if (backgroundMusic.paused) {
+        startBackgroundMusic();
+      } else {
+        backgroundMusic.pause();
+        musicToggle.textContent = 'Tocar música 🎵';
+      }
+    });
     yesButton.addEventListener('click', openModal);
     closeButton.addEventListener('click', closeModal);
     modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
@@ -125,6 +146,7 @@
   </script>
 </body>
 </html>
+
 
 
 
