@@ -22,9 +22,9 @@
     .hint { min-height:20px; margin:17px 0 0; color:#a17d89; font-size:13px; }
     #music-toggle { margin-top:18px; color:#98495e; background:#ffebe8; }
     #music-toggle:hover { background:#ffe0e1; transform:translateY(-2px); }
-    .music-player { display:none; width:100%; margin-top:18px; overflow:hidden; border-radius:16px; aspect-ratio:16/9; }
+    .music-player { display:none; width:100%; margin-top:18px; }
     .music-player.show { display:block; }
-    .music-player iframe { width:100%; height:100%; border:0; }
+    .music-player audio { width:100%; }
     .heart { color:var(--pink); }
     .modal { position:fixed; inset:0; z-index:5; display:grid; place-items:center; padding:24px; background:#432b3570; opacity:0; visibility:hidden; transition:opacity .2s,visibility .2s; }
     .modal.show { opacity:1; visibility:visible; }
@@ -108,15 +108,17 @@
       const isOpen = musicPlayer.classList.toggle("show");
       musicToggle.setAttribute("aria-expanded", String(isOpen));
       if (isOpen) {
-        const frame = document.createElement("iframe");
-        frame.title = "Sorriso Resplandecente, abertura de Dragon Ball GT";
-        frame.src = "https://www.youtube-nocookie.com/embed/L0_nXyTMyqM?autoplay=1&rel=0";
-        frame.allow = "autoplay; encrypted-media; picture-in-picture; web-share";
-        frame.referrerPolicy = "strict-origin-when-cross-origin";
-        frame.allowFullscreen = true;
-        musicPlayer.replaceChildren(frame);
+        const audio = document.createElement("audio");
+        audio.controls = true;
+        audio.autoplay = true;
+        audio.preload = "none";
+        audio.setAttribute("aria-label", "Sorriso Resplandecente");
+        audio.src = "sorriso-resplandecente.mp3";
+        musicPlayer.replaceChildren(audio);
         musicToggle.textContent = "Fechar música ✕";
       } else {
+        const audio = musicPlayer.querySelector("audio");
+        if (audio) { audio.pause(); audio.currentTime = 0; }
         musicPlayer.replaceChildren();
         musicToggle.textContent = "Tocar “Sorriso Resplandecente” 🎵";
       }
@@ -128,6 +130,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
