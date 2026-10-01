@@ -49,7 +49,7 @@
       <button id="no" type="button" aria-label="Não (botão brincalhão que se move)">Não</button>
     </div>
     <p class="hint" id="hint" aria-live="polite">Escolha sua resposta 😉</p>
-    <button id="music-toggle" type="button" aria-expanded="false">Tocar “Sorriso Resplandecente” 🎵</button>
+    <button id="music-toggle" type="button" aria-expanded="false">Tocar música 🎵</button>
     <div class="music-player" id="music-player"></div>
   </main>
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="answer-title" aria-hidden="true">
@@ -105,31 +105,24 @@
       yesButton.focus();
     }
     musicToggle.addEventListener("click", () => {
-      const isOpen = musicPlayer.classList.toggle("show");
-      musicToggle.setAttribute("aria-expanded", String(isOpen));
-      if (isOpen) {
-        const audio = document.createElement("audio");
-        audio.controls = true;
-        audio.autoplay = true;
-        audio.preload = "none";
-        audio.setAttribute("aria-label", "Sorriso Resplandecente");
-        audio.src = "sorriso-resplandecente.mp3";
-        musicPlayer.replaceChildren(audio);
-        musicToggle.textContent = "Fechar música ✕";
-      } else {
-        const audio = musicPlayer.querySelector("audio");
-        if (audio) { audio.pause(); audio.currentTime = 0; }
-        musicPlayer.replaceChildren();
-        musicToggle.textContent = "Tocar “Sorriso Resplandecente” 🎵";
-      }
-    });
-    yesButton.addEventListener('click', openModal);
+      if (musicPlayer.querySelector("audio")) return;
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.autoplay = true;
+      audio.preload = "none";
+      audio.setAttribute("aria-label", "Música do convite");
+      audio.src = "sorriso-resplandecente.mp3";
+      musicPlayer.append(audio);
+      musicPlayer.classList.add("show");
+      musicToggle.setAttribute("aria-expanded", "true");
+    });    yesButton.addEventListener('click', openModal);
     closeButton.addEventListener('click', closeModal);
     modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
     document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && modal.classList.contains('show')) closeModal(); });
   </script>
 </body>
 </html>
+
 
 
 
