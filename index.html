@@ -120,24 +120,14 @@
       modal.setAttribute('aria-hidden', 'true');
       yesButton.focus();
     }
-    musicToggle.addEventListener("click", () => {
-      if (musicPlayer.querySelector("audio")) return;
-      const audio = document.createElement("audio");
-      audio.controls = true;
-      audio.autoplay = true;
-      audio.preload = "none";
-      audio.setAttribute("aria-label", "Música do convite");
-      audio.src = "sorriso-resplandecente.mp3";
-      musicPlayer.append(audio);
-      musicPlayer.classList.add("show");
-      musicToggle.setAttribute("aria-expanded", "true");
-    });    yesButton.addEventListener('click', openModal);
+    yesButton.addEventListener('click', openModal);
     closeButton.addEventListener('click', closeModal);
     modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
     document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && modal.classList.contains('show')) closeModal(); });
   </script>
 </body>
 </html>
+
 
 
 
