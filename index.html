@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff4f0">
+  <title>Tenho um convite pra você 💌</title>
+  <style>
+    :root { color-scheme: light; --ink:#432b35; --pink:#f27b91; --deep:#cf526f; --cream:#fff8f3; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; font-family:ui-rounded,"Segoe UI",system-ui,sans-serif; color:var(--ink); background:radial-gradient(circle at 15% 20%,#ffe1dd 0 2px,transparent 3px),radial-gradient(circle at 85% 75%,#ffd9d4 0 3px,transparent 4px),linear-gradient(145deg,#fff3ef,#ffe8ed 55%,#fff7ee); }
+    .card { width:min(100%,470px); padding:38px 28px 32px; text-align:center; background:rgba(255,255,255,.88); border:1px solid #fff; border-radius:28px; box-shadow:0 22px 70px #a34d6125; }
+    .stamp { display:grid; place-items:center; width:76px; height:76px; margin:0 auto 18px; border-radius:50%; background:#fff0ec; font-size:38px; }
+    .eyebrow { margin:0 0 8px; color:var(--deep); font-weight:750; letter-spacing:.12em; text-transform:uppercase; font-size:12px; }
+    h1 { margin:0; font-size:clamp(30px,8vw,42px); line-height:1.08; letter-spacing:-.04em; }
+    .copy { margin:16px auto 26px; max-width:340px; color:#765b65; font-size:17px; line-height:1.55; }
+    .buttons { display:flex; justify-content:center; align-items:center; gap:14px; min-height:56px; }
+    button { border:0; border-radius:999px; padding:14px 24px; font:700 16px inherit; font-family:inherit; font-size:16px; font-weight:750; cursor:pointer; transition:transform .18s,background .18s,box-shadow .18s; }
+    #yes { color:white; background:var(--pink); box-shadow:0 8px 18px #e96d8840; }
+    #yes:hover { background:var(--deep); transform:translateY(-2px); }
+    #no { color:#775e67; background:#f5edf0; position:relative; z-index:2; touch-action:none; }
+    .hint { min-height:20px; margin:17px 0 0; color:#a17d89; font-size:13px; }
+    .heart { color:var(--pink); }
+    .modal { position:fixed; inset:0; z-index:5; display:grid; place-items:center; padding:24px; background:#432b3570; opacity:0; visibility:hidden; transition:opacity .2s,visibility .2s; }
+    .modal.show { opacity:1; visibility:visible; }
+    .invite { width:min(100%,430px); padding:36px 28px; border-radius:28px; background:var(--cream); text-align:center; box-shadow:0 24px 80px #35172250; transform:translateY(12px) scale(.98); transition:transform .25s; }
+    .modal.show .invite { transform:translateY(0) scale(1); }
+    .invite .stamp { background:#ffe6e2; }
+    .invite h2 { margin:0 0 12px; font-size:34px; line-height:1.1; }
+    .invite p { color:#765b65; font-size:17px; line-height:1.55; }
+    .date { display:inline-block; margin:6px 0; padding:10px 15px; border-radius:14px; background:#ffebe8; color:#98495e; font-weight:800; }
+    .close { margin-top:9px; color:white; background:var(--pink); }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; } }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="stamp" aria-hidden="true">💌</div>
+    <p class="eyebrow">Um convite especial</p>
+    <h1>Quer sair comigo?</h1>
+    <p class="copy">Prometo uma noite gostosa, boas risadas e uma companhia muito legal. <span class="heart">♥</span></p>
+    <div class="buttons" id="play-area">
+      <button id="yes" type="button">Sim! 💖</button>
+      <button id="no" type="button" aria-label="Não (botão brincalhão que se move)">Não</button>
+    </div>
+    <p class="hint" id="hint" aria-live="polite">Escolha sua resposta 😉</p>
+  </main>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="answer-title" aria-hidden="true">
+    <section class="invite">
+      <div class="stamp" aria-hidden="true">🥰</div>
+      <h2 id="answer-title">Então tá marcado!</h2>
+      <p>Nosso encontro vai ser:</p>
+      <div class="date">Sábado, 10/10, às 20h</div>
+      <p>Sua única preocupação é escolher a roupa que vai vestir. ✨</p>
+      <button class="close" id="close" type="button">Mal posso esperar! 💕</button>
+    </section>
+  </div>
+  <script>
+    const noButton = document.querySelector('#no');
+    const area = document.querySelector('#play-area');
+    const hint = document.querySelector('#hint');
+    const modal = document.querySelector('#modal');
+    const yesButton = document.querySelector('#yes');
+    const closeButton = document.querySelector('#close');
+    let moves = 0;
+
+    function moveNo() {
+      const areaRect = area.getBoundingClientRect();
+      const buttonRect = noButton.getBoundingClientRect();
+      const margin = 6;
+      const maxX = Math.max(margin, areaRect.width - buttonRect.width - margin);
+      const maxY = 86;
+      const x = margin + Math.random() * Math.max(0, maxX - margin);
+      const y = (Math.random() - 0.5) * maxY;
+      noButton.style.position = 'absolute';
+      noButton.style.left = `${Math.min(x, maxX)}px`;
+      noButton.style.top = `calc(50% + ${y}px)`;
+      noButton.style.transform = 'translateY(-50%)';
+      moves++;
+      hint.textContent = moves === 1 ? 'Opa! Esse botão é ligeiro 😄' : 'Quase! Tenta de novo… ou escolhe “Sim” 💖';
+    }
+
+    noButton.addEventListener('pointerenter', moveNo);
+    noButton.addEventListener('focus', moveNo);
+    noButton.addEventListener('click', (event) => { event.preventDefault(); moveNo(); });
+    noButton.addEventListener('touchstart', (event) => { event.preventDefault(); moveNo(); }, { passive:false });
+
+    function openModal() {
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+      closeButton.focus();
+    }
+    function closeModal() {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+      yesButton.focus();
+    }
+    yesButton.addEventListener('click', openModal);
+    closeButton.addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && modal.classList.contains('show')) closeModal(); });
+  </script>
+</body>
+</html>
