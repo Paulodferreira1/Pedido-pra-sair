@@ -26,6 +26,8 @@
     .music-player.show { display:block; }
     .music-player audio { width:100%; }
     .heart { color:var(--pink); }
+    .heart-particle { position:fixed; z-index:10; left:var(--x); top:var(--y); pointer-events:none; font-size:var(--size); animation:heart-pop 1.35s ease-out forwards; }
+    @keyframes heart-pop { 0% { opacity:0; transform:translate(0,0) scale(.5) rotate(0deg); } 15% { opacity:1; } 100% { opacity:0; transform:translate(var(--dx),var(--dy)) scale(1.15) rotate(var(--spin)); } }
     .modal { position:fixed; inset:0; z-index:5; display:grid; place-items:center; padding:24px; background:#432b3570; opacity:0; visibility:hidden; transition:opacity .2s,visibility .2s; }
     .modal.show { opacity:1; visibility:visible; }
     .invite { width:min(100%,430px); padding:36px 28px; border-radius:28px; background:var(--cream); text-align:center; box-shadow:0 24px 80px #35172250; transform:translateY(12px) scale(.98); transition:transform .25s; }
@@ -94,7 +96,30 @@
     noButton.addEventListener('click', (event) => { event.preventDefault(); moveNo(); });
     noButton.addEventListener('touchstart', (event) => { event.preventDefault(); moveNo(); }, { passive:false });
 
+    function launchHearts() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const bounds = yesButton.getBoundingClientRect();
+      const originX = bounds.left + bounds.width / 2;
+      const originY = bounds.top + bounds.height / 2;
+      const symbols = ['💖', '💗', '💕', '♥'];
+      for (let index = 0; index < 22; index++) {
+        const heart = document.createElement('span');
+        heart.className = 'heart-particle';
+        heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        heart.style.setProperty('--x', `${originX}px`);
+        heart.style.setProperty('--y', `${originY}px`);
+        heart.style.setProperty('--dx', `${(Math.random() - 0.5) * 360}px`);
+        heart.style.setProperty('--dy', `${-100 - Math.random() * 280}px`);
+        heart.style.setProperty('--spin', `${(Math.random() - 0.5) * 120}deg`);
+        heart.style.setProperty('--size', `${16 + Math.random() * 20}px`);
+        heart.style.animationDelay = `${Math.random() * 180}ms`;
+        heart.addEventListener('animationend', () => heart.remove(), { once:true });
+        document.body.append(heart);
+      }
+    }
+
     function openModal() {
+      launchHearts();
       modal.classList.add('show');
       modal.setAttribute('aria-hidden', 'false');
       closeButton.focus();
@@ -122,6 +147,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
