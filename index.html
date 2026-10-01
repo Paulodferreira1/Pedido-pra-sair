@@ -67,21 +67,19 @@
     let moves = 0;
 
     function moveNo() {
-      const areaRect = area.getBoundingClientRect();
       const buttonRect = noButton.getBoundingClientRect();
-      const margin = 6;
-      const maxX = Math.max(margin, areaRect.width - buttonRect.width - margin);
-      const maxY = 86;
+      const margin = 12;
+      const maxX = Math.max(margin, window.innerWidth - buttonRect.width - margin);
+      const maxY = Math.max(margin, window.innerHeight - buttonRect.height - margin);
       const x = margin + Math.random() * Math.max(0, maxX - margin);
-      const y = (Math.random() - 0.5) * maxY;
-      noButton.style.position = 'absolute';
-      noButton.style.left = `${Math.min(x, maxX)}px`;
-      noButton.style.top = `calc(50% + ${y}px)`;
-      noButton.style.transform = 'translateY(-50%)';
+      const y = margin + Math.random() * Math.max(0, maxY - margin);
+      noButton.style.position = 'fixed';
+      noButton.style.left = `${x}px`;
+      noButton.style.top = `${y}px`;
+      noButton.style.transform = 'none';
       moves++;
       hint.textContent = moves === 1 ? 'Opa! Esse botão é ligeiro 😄' : 'Quase! Tenta de novo… ou escolhe “Sim” 💖';
     }
-
     noButton.addEventListener('pointerenter', moveNo);
     noButton.addEventListener('focus', moveNo);
     noButton.addEventListener('click', (event) => { event.preventDefault(); moveNo(); });
@@ -127,6 +125,7 @@
   </script>
 </body>
 </html>
+
 
 
 
