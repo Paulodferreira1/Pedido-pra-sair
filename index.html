@@ -21,10 +21,11 @@
     #no { color:#775e67; background:#f5edf0; position:relative; z-index:2; touch-action:none; }
     .hint { min-height:20px; margin:17px 0 0; color:#a17d89; font-size:13px; }
     .heart { color:var(--pink); }
-    .heart-rain { position:fixed; inset:0; z-index:6; overflow:hidden; pointer-events:none; background:linear-gradient(180deg,rgba(255,244,240,.94),rgba(255,244,240,.72)); animation:curtain-reveal 3.4s cubic-bezier(.25,.65,.35,1) forwards; }
-    .falling-heart { position:absolute; top:-60px; left:var(--left); font-size:var(--size); opacity:0; animation:heart-fall var(--duration) cubic-bezier(.35,.05,.65,.95) var(--delay) forwards; }
-    @keyframes heart-fall { 0% { opacity:0; transform:translate(0,-8vh) rotate(0deg); } 12% { opacity:1; } 100% { opacity:.75; transform:translate(var(--drift),112vh) rotate(var(--spin)); } }
-    @keyframes curtain-reveal { 0% { opacity:1; } 100% { opacity:0; } }
+    .heart-rain { position:fixed; inset:0; z-index:6; overflow:hidden; pointer-events:none; }
+    .heart-curtain { position:absolute; inset:0; background:linear-gradient(180deg,rgba(255,244,240,.97),rgba(255,231,237,.93)); clip-path:inset(0 0 0 0); animation:curtain-reveal 4.8s cubic-bezier(.45,0,.55,1) forwards; }
+    .falling-heart { position:absolute; z-index:1; top:-60px; left:var(--left); font-size:var(--size); opacity:0; animation:heart-fall var(--duration) cubic-bezier(.38,0,.62,1) var(--delay) forwards; }
+    @keyframes heart-fall { 0% { opacity:0; transform:translate(0,-8vh) rotate(0deg); } 8% { opacity:1; } 100% { opacity:.8; transform:translate(var(--drift),112vh) rotate(var(--spin)); } }
+    @keyframes curtain-reveal { 0% { clip-path:inset(0 0 0 0); } 100% { clip-path:inset(100% 0 0 0); } }
     .modal { position:fixed; inset:0; z-index:5; display:grid; place-items:center; padding:24px; background:#432b3570; opacity:0; visibility:hidden; transition:opacity .2s,visibility .2s; }
     .modal.show { opacity:1; visibility:visible; }
     .invite { width:min(100%,430px); padding:36px 28px; border-radius:28px; background:var(--cream); text-align:center; box-shadow:0 24px 80px #35172250; transform:translateY(12px) scale(.98); transition:transform .25s; }
@@ -99,6 +100,9 @@
       const rain = document.createElement('div');
       rain.className = 'heart-rain';
       rain.setAttribute('aria-hidden', 'true');
+      const curtain = document.createElement('div');
+      curtain.className = 'heart-curtain';
+      rain.append(curtain);
       const symbols = ['💖', '💗', '💕', '♥'];
       for (let index = 0; index < 72; index++) {
         const heart = document.createElement('span');
@@ -106,8 +110,8 @@
         heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
         heart.style.setProperty('--left', `${Math.random() * 100}vw`);
         heart.style.setProperty('--size', `${18 + Math.random() * 20}px`);
-        heart.style.setProperty('--duration', `${1.7 + Math.random() * 0.7}s`);
-        heart.style.setProperty('--delay', `${Math.random() * 0.9}s`);
+        heart.style.setProperty('--duration', `${2.8 + Math.random() * 1.4}s`);
+        heart.style.setProperty('--delay', `${Math.random() * 0.7}s`);
         heart.style.setProperty('--drift', `${(Math.random() - 0.5) * 100}px`);
         heart.style.setProperty('--spin', `${(Math.random() - 0.5) * 300}deg`);
         rain.append(heart);
@@ -117,7 +121,7 @@
         window.setTimeout(() => {
           rain.remove();
           resolve();
-        }, 3500);
+        }, 5200);
       });
     }
     function startBackgroundMusic() {
@@ -151,6 +155,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
