@@ -21,9 +21,9 @@
     #no { color:#775e67; background:#f5edf0; position:relative; z-index:2; touch-action:none; }
     .hint { min-height:20px; margin:17px 0 0; color:#a17d89; font-size:13px; }
     .heart { color:var(--pink); }
-    .heart-particle { position:fixed; z-index:10; left:var(--x); top:var(--y); pointer-events:none; font-size:var(--size); animation:heart-pop 1.35s ease-out forwards; }
-    @keyframes heart-pop { 0% { opacity:0; transform:translate(0,0) scale(.5) rotate(0deg); } 15% { opacity:1; } 100% { opacity:0; transform:translate(var(--dx),var(--dy)) scale(1.15) rotate(var(--spin)); } }
-    .modal { position:fixed; inset:0; z-index:5; display:grid; place-items:center; padding:24px; background:#432b3570; opacity:0; visibility:hidden; transition:opacity .2s,visibility .2s; }
+    .heart-rain { position:fixed; inset:0; z-index:6; overflow:hidden; pointer-events:none; background:rgba(255,244,240,.97); }
+    .falling-heart { position:absolute; top:-60px; left:var(--left); font-size:var(--size); opacity:0; animation:heart-fall var(--duration) linear var(--delay) forwards; }
+    @keyframes heart-fall { 0% { opacity:0; transform:translate(0,-8vh) rotate(0deg); } 12% { opacity:1; } 100% { opacity:.8; transform:translate(var(--drift),112vh) rotate(var(--spin)); } }    .modal { position:fixed; inset:0; z-index:5; display:grid; place-items:center; padding:24px; background:#432b3570; opacity:0; visibility:hidden; transition:opacity .2s,visibility .2s; }
     .modal.show { opacity:1; visibility:visible; }
     .invite { width:min(100%,430px); padding:36px 28px; border-radius:28px; background:var(--cream); text-align:center; box-shadow:0 24px 80px #35172250; transform:translateY(12px) scale(.98); transition:transform .25s; }
     .modal.show .invite { transform:translateY(0) scale(1); }
@@ -92,28 +92,32 @@
     noButton.addEventListener('click', (event) => { event.preventDefault(); moveNo(); });
     noButton.addEventListener('touchstart', (event) => { event.preventDefault(); moveNo(); }, { passive:false });
 
-    function launchHearts() {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const bounds = yesButton.getBoundingClientRect();
-      const originX = bounds.left + bounds.width / 2;
-      const originY = bounds.top + bounds.height / 2;
+    function launchHeartRain() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return Promise.resolve();
+      const rain = document.createElement('div');
+      rain.className = 'heart-rain';
+      rain.setAttribute('aria-hidden', 'true');
       const symbols = ['💖', '💗', '💕', '♥'];
-      for (let index = 0; index < 60; index++) {
+      for (let index = 0; index < 72; index++) {
         const heart = document.createElement('span');
-        heart.className = 'heart-particle';
+        heart.className = 'falling-heart';
         heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-        heart.style.setProperty('--x', `${originX}px`);
-        heart.style.setProperty('--y', `${originY}px`);
-        heart.style.setProperty('--dx', `${(Math.random() - 0.5) * 360}px`);
-        heart.style.setProperty('--dy', `${-100 - Math.random() * 280}px`);
-        heart.style.setProperty('--spin', `${(Math.random() - 0.5) * 120}deg`);
-        heart.style.setProperty('--size', `${16 + Math.random() * 20}px`);
-        heart.style.animationDelay = `${Math.random() * 180}ms`;
-        heart.addEventListener('animationend', () => heart.remove(), { once:true });
-        document.body.append(heart);
+        heart.style.setProperty('--left', `${Math.random() * 100}vw`);
+        heart.style.setProperty('--size', `${18 + Math.random() * 20}px`);
+        heart.style.setProperty('--duration', `${1.05 + Math.random() * 0.55}s`);
+        heart.style.setProperty('--delay', `${Math.random() * 0.45}s`);
+        heart.style.setProperty('--drift', `${(Math.random() - 0.5) * 100}px`);
+        heart.style.setProperty('--spin', `${(Math.random() - 0.5) * 300}deg`);
+        rain.append(heart);
       }
+      document.body.append(rain);
+      return new Promise((resolve) => {
+        window.setTimeout(() => {
+          rain.remove();
+          resolve();
+        }, 2200);
+      });
     }
-
     function startBackgroundMusic() {
       musicToggle.textContent = 'Pausar música 🔊';
       backgroundMusic.play().catch(() => { musicToggle.textContent = 'Tocar música 🎵'; });
@@ -121,10 +125,9 @@
 
     function openModal() {
       startBackgroundMusic();
-      launchHearts();
       modal.classList.add('show');
       modal.setAttribute('aria-hidden', 'false');
-      closeButton.focus();
+      launchHeartRain().then(() => closeButton.focus());
     }
     function closeModal() {
       modal.classList.remove('show');
@@ -146,6 +149,7 @@
   </script>
 </body>
 </html>
+
 
 
 
